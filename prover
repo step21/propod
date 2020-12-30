@@ -62,6 +62,7 @@ sub main {
         while ( defined ($_ = $term->readline('Enter a sequent: ')) ) {
             chomp;
             s/\.\s*$//;
+            last if /^\s*$/;
             $param{'sequent'} = $_;
             &prove;
         }
