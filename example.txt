@@ -30,7 +30,8 @@ p->q->r <--> (p/\q)->r
 (p->q)/\(p->r) <--> p->q/\r
 (p->r)/\(q->r) <--> (p\/q)->r
 p->q, q->r --> p->r
-% First-order sequent
+
+% Propositional formula
 p->(q->p)
 (p->(q->r))->((p->q)->(p->r))
 (p-> ~q)->((p->q)-> ~p)
@@ -39,6 +40,7 @@ p/\(p->q)/\(p/\q->s)->s
 p\/(p->q)
 ((p->q)->p)->p
 
+% First-order sequent
 X@p(X) --> p(a)/\p(b)
 p(a)\/p(b) --> X#p(X)
 X@X@p(X) <--> X@p(X)
