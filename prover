@@ -44,7 +44,8 @@ sub main {
     &getopts("ho:t:");
     if ($opt_h) {
         print "Usage: $0 [options] <input\n";
-        print "  -h         : Help\n";
+        print "  -h : Help\n";
+        print "  -t N : Timeout in seconds (default 30)\n";
         print "  -o {pretty,tex,standard,term,pdf} : Output style\n";
         exit(1);
     }
@@ -113,7 +114,7 @@ sub prove {
 
     open(TMP, ">$tmp") || die "cannot create $tmp";
     print TMP "compile('$program').\n";
-    print TMP "cgi ; halt.\n";
+    print TMP "batch ; halt.\n";
     print TMP "$style .\n";
     print TMP "$sequent .\n";
     close(TMP) || die "cannot close $tmp";

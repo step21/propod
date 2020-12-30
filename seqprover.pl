@@ -6,7 +6,7 @@
 %%%  You can freely distribute or modify this program.
 %%%
 %%%  Version 2.0
-%%%    12/19/2020 Modified for SWI Prolog and bug fix based on a comment from Joseph Vidal-Rosset
+%%%    12/30/2020 Modified for SWI Prolog
 %%%
 :- dynamic
 	seq_system/2, threshold/1, output_form/1, logging/2,
@@ -998,28 +998,28 @@ tabx(X) :-
 	tab(STR, X).
 
 %%
-%%  CGI
+%%  Batch
 %%
-cgi :-
+batch :-
 	nl, write('# Start'), nl,
 	% prolog_flag(syntax_errors, _, quiet),
 	read(Output),
 	read(Sequent),
 	set_output_form(Output),
-	cgi_prove(Sequent),
+	batch_prove(Sequent),
 	!,
 	flush_out,
 	halt.
-cgi :-
+batch :-
 	nl, write('# Syntax error'), nl,
 	flush_out,
 	halt.
 
-cgi_prove((X <--> Y)) :- !,
-	cgi_prove((X --> Y)),
+batch_prove((X <--> Y)) :- !,
+	batch_prove((X --> Y)),
 	nl,
-	cgi_prove((Y --> X)).
-cgi_prove(S0) :-
+	batch_prove((Y --> X)).
+batch_prove(S0) :-
 	(
 	    convert_to_seq(S0, S),
 	    sequentq(S)
