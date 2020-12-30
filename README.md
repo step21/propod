@@ -38,7 +38,7 @@ Enter a sequent: Ctrl-d
 If you prepare an input file (e.g. [example.txt](example.txt)),
 it can be given as an input.
 ```
-./prover example.txt
+$ ./prover example.txt
 Welcome to SWI-Prolog (threaded, 64 bits, version 7.6.4)
 ...(snip)...
 # BEGIN Proof
@@ -70,7 +70,7 @@ n(0),X@(n(X)->n(s(X))) --> n(0),n(s(s(0)))               n(0),n(s(0)),X@(n(X)->n
 
 When you specify the `-o pdf` option, PDF file named `main.pdf` will be generated.
 ```
-./prover -o pdf example.txt
+$ ./prover -o pdf example.txt
 ```
 
 ## Links
