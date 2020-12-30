@@ -1,3 +1,4 @@
+% Propositional sequent
 p/\top <--> p
 p\/bot <--> p
 p/\bot <--> bot
@@ -29,7 +30,7 @@ p->q->r <--> (p/\q)->r
 (p->q)/\(p->r) <--> p->q/\r
 (p->r)/\(q->r) <--> (p\/q)->r
 p->q, q->r --> p->r
-
+% First-order sequent
 p->(q->p)
 (p->(q->r))->((p->q)->(p->r))
 (p-> ~q)->((p->q)-> ~p)
