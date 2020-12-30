@@ -1,0 +1,156 @@
+#!/usr/bin/perl
+###
+### Perl Script for Sequent Prover 'seqprover'
+### Version: 1.0
+### Copyright: Naoyuki Tamura (tamura@kobe-u.ac.jp)
+### 2020/12/31 version 1.0 released
+### This program is free software; you can redistribute it and/or
+### modify it under the terms of the GNU General Public License
+### as published by the Free Software Foundation; either version 2
+### of the License, or (at your option) any later version.
+###
+use strict;
+use Getopt::Std;
+use Term::ReadLine;   # Do not "use Term::ReadLine::Gnu;"
+
+use vars qw($opt_h $opt_o $opt_t);
+my %param;
+$param{'prolog'} = "swipl";
+$param{'program'} = "seqprover.pl";
+$param{'main.tex'} = "main.tex";
+$param{'output.tex'} = "output.tex";
+
+my $tmp = "/tmp/seqprover$$";
+my $log = "$tmp.log";
+
+open(LOG, ">", $log) || die;
+&main;
+close(LOG);
+if ($param{'style'} eq "pdf") {
+    print "PDF\n";
+    &make_pdf;
+}
+
+unlink($tmp);
+unlink($log);
+exit 0;
+
+################################################################
+##
+## Main
+##
+################################################################
+sub main {
+    &getopts("ho:t:");
+    if ($opt_h) {
+        print "Usage: $0 [options] <input\n";
+        print "  -h         : Help\n";
+        print "  -o {pretty,tex,standard,term,pdf} : Output style\n";
+        exit(1);
+    }
+    $param{'timeout'} = $opt_t || 30;
+    my $style = $opt_o;
+    $style =~ tr/A-Z/a-z/;
+    if ($style ne "pretty" && $style ne "tex" && $style ne "standard"
+        && $style ne "term" && $style ne "pdf") {
+	$style = "pretty";
+    }
+    $param{'style'} = $style;
+    if (-t STDIN && @ARGV == 0) {
+        my $term = new Term::ReadLine 'seqprover';
+        while ( defined ($_ = $term->readline('Enter a sequent: ')) ) {
+            chomp;
+            s/\.\s*$//;
+            $param{'sequent'} = $_;
+            &prove;
+        }
+    } else {
+        while (<>) {
+            chomp;
+            s/\.\s*$//;
+            next if /^\s*$/ || /^\s*%/;
+            $param{'sequent'} = $_;
+            &prove;
+        }
+    }
+}
+
+sub make_pdf {
+    open(LOG, "<", $log) || die;
+    open(TEX, ">", $param{'output.tex'}) || die;
+    my $texblock = 0;
+    while (<LOG>) {
+        chomp;
+        if (/^# BEGIN Proof/) {
+            $texblock = 1;
+            print TEX "\\begin{displaymath}\n";
+        } elsif (/^# END Proof/) {
+            $texblock = 0;
+            print TEX "\\end{displaymath}\n";
+            print TEX "\n";
+        } elsif ($texblock && ! /^\s*$/) {
+            print TEX "$_\n";
+        }
+    }
+    close(TEX);
+    close(LOG);
+    my $main = $param{'main.tex'};
+    system("pdflatex $main");
+}
+
+################################################################
+##
+## Sequent prover
+##
+################################################################
+sub prove {
+    my $style = $param{'style'};
+    $style = "tex" if $style eq "pdf";
+    my $sequent = $param{'sequent'};
+    my $prolog = $param{'prolog'};
+    my $program = $param{'program'};
+    $param{'proved'} = 'no';
+
+    open(TMP, ">$tmp") || die "cannot create $tmp";
+    print TMP "compile('$program').\n";
+    print TMP "cgi ; halt.\n";
+    print TMP "$style .\n";
+    print TMP "$sequent .\n";
+    close(TMP) || die "cannot close $tmp";
+
+    $SIG{'ALRM'} = \&timeout;
+    alarm($param{'timeout'});
+    eval {
+	setpgrp($$, $$);
+	$SIG{'TERM'} = 'DEFAULT';
+	my $cmd = "$prolog <$tmp |";
+	open(CMD, $cmd) || die "cannot execute $prolog";
+	$SIG{'TERM'} = 'IGNORE';
+	while (<CMD>) {
+	    last if /^\# Start/i;
+	}
+	while (<CMD>) {
+	    chomp;
+	    if (/^\# Proved/i) {
+		$param{'proved'} = 'yes' unless $param{'proved'};
+	    } elsif (/^\# Fail to prove/i) {
+		$param{'proved'} = 'no';
+	    } elsif (/^\# Syntax error/i) {
+		$param{'proved'} = 'err';
+	    }
+	    print "$_\n";
+	    print LOG "$_\n";
+	}
+	close(CMD);
+    };
+    if ($param{'proved'} eq 'timeout') {
+	print "# Timeout\n";
+	print LOG "# Timeout\n";
+	kill(-15, $$);
+    }
+}
+
+sub timeout {
+    $param{'proved'} = 'timeout';
+    die;
+}
