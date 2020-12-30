@@ -33,8 +33,6 @@ a --> a
 # END Proof
 
 # Proved in 0 msec.
-
-Enter a sequent: Ctrl-d
 ```
 
 If you prepare an input file (e.g. [example.txt](example.txt)),
