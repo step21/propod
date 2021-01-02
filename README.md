@@ -1,4 +1,4 @@
-# README
+# GitPod for seqprover
 
 ## First step
 
@@ -80,3 +80,4 @@ $ ./prover -o pdf example.txt
 - <https://cspsat.gitlab.io/llprover/>
     - <https://gitlab.com/cspsat/llprover-gitpod/>
 - <https://gitpod.io/>
+- Author: [Naoyuki Tamura](https://tamura70.gitlab.io/)
