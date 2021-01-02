@@ -16,6 +16,7 @@ The `./prover` command will prompt you to enter a sequent or a formula to be pro
 
 ```
 $ ./prover
+Enter a sequent: a --> a
 Welcome to SWI-Prolog (threaded, 64 bits, version 7.6.4)
 SWI-Prolog comes with ABSOLUTELY NO WARRANTY. This is free software.
 Please run ?- license. for legal details.
