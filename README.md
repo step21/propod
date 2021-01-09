@@ -41,7 +41,7 @@ it can be given as an input.
 ```
 $ ./prover example.txt
 Welcome to SWI-Prolog (threaded, 64 bits, version 7.6.4)
-...(snip)...
+  ......
 # BEGIN Proof
 ------- Ax
 p --> p
@@ -51,7 +51,7 @@ p,top --> p
 p/\top --> p
 
 # END Proof
-...(snip)...
+  ......
 # BEGIN Proof
                        ----------------------------------------------------- Ax  -------------------------------------------------------- Ax
                        n(0),n(s(0)),X@(n(X)->n(s(X))) --> n(s(0)),n(s(s(0)))     n(0),n(s(0)),n(s(s(0))),X@(n(X)->n(s(X))) --> n(s(s(0)))
