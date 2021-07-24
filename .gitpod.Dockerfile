@@ -1,7 +1,7 @@
 FROM gitpod/workspace-full
 
 RUN sudo apt-get -q update
-
+RUN sudo apt-get install -yq software-properties-common
 # Install LaTeX
 RUN sudo apt-get install -yq texlive-full perl libterm-readline-gnu-perl
 
